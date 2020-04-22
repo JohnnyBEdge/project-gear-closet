@@ -82,35 +82,56 @@ const addGear = (items) => {
     return promise;
 };
 
+// const removeGear = (id) => {
+//     const promise = new Promise((resolve, reject) => {
+//         MongoClient.connect(url, settings, function(err, client){
+//             if(err){
+//                 reject(err);
+//             } else {
+//                 console.log("Successfully connect to DB for DELETE");
+//                 const db = client.db(dbName);
+//                 const collection = db.collection(collName);
+//                 try{
+//                     collection.deleteOne({_id: ObjectID(id)}, function(err, data){
+//                         if(err){
+//                             reject(err);
+//                         } else {
+//                             if(data.lastErrorObject.n > 0){
+//                                 resolve(data.value);
+//                             } else {
+//                                 resolve({error: "ID doesn't exist."})
+//                             }
+//                         }
+//                     })
+//                 } catch(err){
+//                     reject({error: "ID has to be in ObjectID format."});
+//                 }
+//             }
+//         })
+//     });
+//     return promise
+// };
 const removeGear = (id) => {
-    const promise = new Promise((resolve, reject) => {
-        MongoClient.connect(url, settings, function(err, client){
-            if(err){
+    const iou = new Promise((resolve, reject) => {
+        MongoClient.connect(url, settings, function (err, client) {
+            if (err) {
                 reject(err);
             } else {
-                console.log("Successfully connect to DB for DELETE");
+                console.log('Connected to DB Server for DELETE');
                 const db = client.db(dbName);
                 const collection = db.collection(collName);
-                try{
-                    const _id = new ObjectID(id);
-                    collection.findOneAndDelete({_id}, function(err, data){
-                        if(err){
-                            reject(err);
-                        } else {
-                            if(data.lastErrorObject.n > 0){
-                                resolve(data.value);
-                            } else {
-                                resolve({error: "ID doesn't exist."})
-                            }
-                        }
-                    })
-                } catch(err){
-                    reject({error: "ID has to be in ObjectID format."});
-                }
+                collection.deleteOne({ _id: ObjectID(id) }, (err, result) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve({ deleted_id: id });
+                        client.close();
+                    }
+                })
             }
         })
-    });
-    return promise
+    })
+    return iou;
 };
 
 

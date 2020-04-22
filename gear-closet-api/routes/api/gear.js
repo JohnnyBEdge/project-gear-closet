@@ -35,9 +35,9 @@ router.post('/', async function(req, res, next){
 });
 
 // DELETE remove from database
-router.delete('/', async function(req, res, nect){
+router.delete('/:id', async function(req, res, nect){
   try{
-    const data = await removeGear(req.body._id);
+    const data = await removeGear(req.params.id);
     res.send(data);
   } catch(err){
       console.log(err);
