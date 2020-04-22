@@ -3,7 +3,8 @@ var router = express.Router();
 
 const {
   getGear,
-  addGear
+  addGear,
+  removeGear
 } = require('../../data/gear');
 
 
@@ -32,5 +33,16 @@ router.post('/', async function(req, res, next){
     }
   };
 });
+
+// DELETE remove from database
+router.delete('/', async function(req, res, nect){
+  try{
+    const data = await removeGear(req.body._id);
+    res.send(data);
+  } catch(err){
+      console.log(err);
+      res.statusMessage(500, 'Internal Server Issue; check logs')
+  }
+})
 
 module.exports = router;
