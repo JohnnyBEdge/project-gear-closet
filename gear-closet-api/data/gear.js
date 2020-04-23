@@ -82,35 +82,6 @@ const addGear = (items) => {
     return promise;
 };
 
-// const removeGear = (id) => {
-//     const promise = new Promise((resolve, reject) => {
-//         MongoClient.connect(url, settings, function(err, client){
-//             if(err){
-//                 reject(err);
-//             } else {
-//                 console.log("Successfully connect to DB for DELETE");
-//                 const db = client.db(dbName);
-//                 const collection = db.collection(collName);
-//                 try{
-//                     collection.deleteOne({_id: ObjectID(id)}, function(err, data){
-//                         if(err){
-//                             reject(err);
-//                         } else {
-//                             if(data.lastErrorObject.n > 0){
-//                                 resolve(data.value);
-//                             } else {
-//                                 resolve({error: "ID doesn't exist."})
-//                             }
-//                         }
-//                     })
-//                 } catch(err){
-//                     reject({error: "ID has to be in ObjectID format."});
-//                 }
-//             }
-//         })
-//     });
-//     return promise
-// };
 const removeGear = (id) => {
     const iou = new Promise((resolve, reject) => {
         MongoClient.connect(url, settings, function (err, client) {
@@ -134,6 +105,31 @@ const removeGear = (id) => {
     return iou;
 };
 
+const updateGear = (id, item) => {
+    const promise = new Promise((resolve, reject) => {
+        MongoClient.connect(url, settings, function(err, client){
+            if(err){
+                reject(err);
+            } else {
+                console.log("Successfully connected to DB for PUT.");
+                const db = client.db(dbName);
+                const collection = db.collection(collName);
+                collection.replaceOne({_id:ObjectID(id)},
+                item,
+                {upsert: true},
+                (err, result) => {
+                    if(err){
+                        reject(err);
+                    } else {
+                        resolve({updated_id: id});
+                        client.close();
+                    }
+                } )
+            }
+        })
+    });
+    return promise;
+};
 
 
 
@@ -141,5 +137,6 @@ const removeGear = (id) => {
 module.exports = {
     getGear,
     addGear,
-    removeGear
+    removeGear,
+    updateGear
 }
